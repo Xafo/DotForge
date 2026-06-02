@@ -87,26 +87,6 @@ dotnet test
 
 60+ integration tests with Testcontainers (real PostgreSQL in Docker).
 
-## CI/CD Setup
-
-The CI workflow is included as `ci-workflow.yml` in the project root. To activate it:
-
-```bash
-# 1. Authorize the GitHub CLI for workflow access (opens browser)
-gh auth refresh --hostname github.com --scopes workflow
-
-# 2. Move the workflow file into place
-mkdir -p .github/workflows
-cp ci-workflow.yml .github/workflows/ci.yml
-
-# 3. Commit and push
-git add .github/workflows/ci.yml
-git commit -m "Add CI workflow"
-git push
-```
-
-Or run `bash scripts/setup-ci.sh` to do all of the above automatically.
-
 ## License
 
 Single-developer license. Use DotForge to build unlimited commercial products. You may not resell DotForge itself as a template.
