@@ -251,7 +251,8 @@ public class AuthService : IAuthService
             .Replace(".", "-");
         slug = new string(slug.Where(c => char.IsLetterOrDigit(c) || c == '-').ToArray());
         slug = slug.Trim('-');
-        return string.IsNullOrEmpty(slug) ? $"org-{Guid.NewGuid():N}"[..12] : slug;
+        var suffix = Guid.NewGuid().ToString("N")[..8];
+        return string.IsNullOrEmpty(slug) ? $"org-{suffix}" : $"{slug}-{suffix}";
     }
 }
 
