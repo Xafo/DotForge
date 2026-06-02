@@ -27,7 +27,8 @@ public class AuthTests
             name = "Test User"
         });
 
-        Assert.True(response.IsSuccessStatusCode);
+        var body = await response.Content.ReadAsStringAsync();
+        Assert.True(response.IsSuccessStatusCode, $"Status: {(int)response.StatusCode}, Body: {body}");
         var result = await response.Content.ReadFromJsonAsync<AuthResponse>();
         Assert.NotNull(result);
         Assert.NotEmpty(result.AccessToken);
