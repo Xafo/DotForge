@@ -25,7 +25,7 @@ public interface IOrganizationService
 
 public interface IMemberService
 {
-    Task<List<MemberDto>> GetMembersAsync(Guid organizationId);
+    Task<List<MemberDto>> GetMembersAsync(Guid organizationId, Guid userId);
     Task<InvitationDto> InviteAsync(Guid organizationId, Guid invitedByUserId, InviteMemberRequest request);
     Task<InvitationDto?> GetInvitationByTokenAsync(string token);
     Task AcceptInvitationAsync(Guid userId, string token);

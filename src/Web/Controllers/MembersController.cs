@@ -18,7 +18,15 @@ public class MembersController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<MemberDto>>> GetAll(Guid orgId)
     {
-        return Ok(await _members.GetMembersAsync(orgId));
+        try
+        {
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            return Ok(await _members.GetMembersAsync(orgId, userId));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Unauthorized(new { error = ex.Message });
+        }
     }
 
     [HttpPost("invite")]

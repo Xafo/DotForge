@@ -32,8 +32,12 @@ public class MemberService : IMemberService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<List<MemberDto>> GetMembersAsync(Guid organizationId)
+    public async Task<List<MemberDto>> GetMembersAsync(Guid organizationId, Guid userId)
     {
+        var membership = await _memberships.GetAsync(organizationId, userId);
+        if (membership is null)
+            throw new InvalidOperationException("Not a member of this organization.");
+
         var memberships = await _memberships.GetOrganizationMembersAsync(organizationId);
         return memberships.Select(m => new MemberDto(
             m.UserId, m.User.Email, m.User.Name, m.Role.ToString(), m.JoinedAt)).ToList();
