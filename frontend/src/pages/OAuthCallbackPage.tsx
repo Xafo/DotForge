@@ -1,13 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { api } from '../config/api'
-import { useAuth } from '../context/AuthContext'
 
 export function OAuthCallbackPage() {
   const { provider } = useParams<{ provider: string }>()
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
-  const { logout } = useAuth()
   const [error, setError] = useState('')
 
   useEffect(() => {

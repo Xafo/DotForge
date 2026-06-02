@@ -47,7 +47,12 @@ async function refreshToken(): Promise<boolean> {
 }
 
 export class ApiError extends Error {
-  constructor(public body: any, public status: number) {
+  body: any
+  status: number
+
+  constructor(body: any, status: number) {
     super(body?.error || 'An error occurred')
+    this.body = body
+    this.status = status
   }
 }
