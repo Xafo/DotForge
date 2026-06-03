@@ -10,13 +10,47 @@ namespace DotForge.Infrastructure;
 
 public static class DependencyInjection
 {
+    static string ParsePostgresUrl(string url)
+    {
+        var uri = new Uri(url);
+        var userInfoParts = uri.UserInfo.Split([':'], 2);
+        var username = Uri.UnescapeDataString(userInfoParts[0]);
+        var password = userInfoParts.Length > 1 ? Uri.UnescapeDataString(userInfoParts[1]) : "";
+        var database = uri.AbsolutePath.TrimStart('/').Split('?')[0];
+
+        var sslMode = "";
+        var query = uri.Query;
+        if (!string.IsNullOrEmpty(query))
+        {
+            var queryParams = query.TrimStart('?').Split('&')
+                .Select(p => p.Split('=', 2))
+                .ToDictionary(p => p[0], p => p.Length > 1 ? Uri.UnescapeDataString(p[1]) : "");
+            if (queryParams.TryGetValue("sslmode", out var ssl))
+            {
+                sslMode = ssl switch
+                {
+                    "require" => "Require",
+                    "prefer" => "Prefer",
+                    "disable" => "Disable",
+                    "verify-ca" => "VerifyCA",
+                    "verify-full" => "VerifyFull",
+                    _ => ssl
+                };
+            }
+        }
+
+        var port = uri.Port > 0 ? uri.Port.ToString() : "5432";
+        var sslPart = string.IsNullOrEmpty(sslMode) ? "" : $";SSL Mode={sslMode}";
+        return $"Host={uri.Host};Port={port};Database={database};Username={username};Password={password};Include Error Detail=true{sslPart}";
+    }
+
     static string ResolveConnectionString(IConfiguration config)
     {
         var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL")?.Trim();
         if (!string.IsNullOrEmpty(databaseUrl))
         {
-            Console.WriteLine($"[DotForge] PostgreSQL: DATABASE_URL (len={databaseUrl.Length}, start={databaseUrl[..Math.Min(20, databaseUrl.Length)]})");
-            return databaseUrl;
+            Console.WriteLine("[DotForge] PostgreSQL: DATABASE_URL");
+            return ParsePostgresUrl(databaseUrl);
         }
 
         var pgHost = Environment.GetEnvironmentVariable("PGHOST");
