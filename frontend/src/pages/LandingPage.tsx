@@ -1,12 +1,14 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '../components/ui/button'
 import { ThemeToggle } from '../components/ThemeToggle'
+import { cn } from '../lib/utils'
 
 const features = [
   {
     icon: '🔐',
     title: 'Auth + JWT',
-    summary: 'Register, login, refresh token rotation, forgot/reset password.',
+    description: 'Register, login, refresh token rotation, forgot/reset password. HttpOnly cookies, BCrypt, SHA-256 token hashing.',
     details: [
       'BCrypt password hashing with configurable work factor',
       'HMAC-SHA256 signed JWT access tokens with configurable expiry',
@@ -20,10 +22,10 @@ const features = [
   {
     icon: '🏢',
     title: 'Multi-tenancy',
-    summary: 'Row-level isolation via EF Core Global Query Filters.',
+    description: 'Row-level isolation via EF Core Global Query Filters. One account, many orgs. Switch orgs without re-login.',
     details: [
       'Every entity scoped to an organization — no cross-org data leaks',
-      'EF CoreGlobal Query Filters auto-apply tenant filter to every query',
+      'EF Core Global Query Filters auto-apply tenant filter to every query',
       'One account, many organizations — switch orgs without re-login',
       'Organization slug with unique constraint and random suffix',
       'Last-active-org tracking for seamless return',
@@ -34,7 +36,7 @@ const features = [
   {
     icon: '💳',
     title: 'Stripe Billing',
-    summary: 'Checkout sessions, webhooks, Billing Portal, subscription management.',
+    description: 'Checkout sessions, webhooks, Billing Portal, subscription management. Cancel-at-period-end, upgrades, downgrades.',
     details: [
       'Stripe Checkout integration — create one-time or subscription sessions',
       'Webhook handling with signature verification (no replay attacks)',
@@ -48,7 +50,7 @@ const features = [
   {
     icon: '👥',
     title: 'Team Invitations',
-    summary: '7-day SHA-256 invitation tokens with atomic account creation.',
+    description: '7-day SHA-256 invitation tokens. Atomic account + membership creation. Revokable, replay prevention.',
     details: [
       'Send invitations by email with automatic token generation',
       'SHA-256 hashed tokens stored in DB — plaintext never persisted',
@@ -62,9 +64,9 @@ const features = [
   {
     icon: '🔑',
     title: 'API Keys',
-    summary: 'Create, revoke, scope API keys with prefix-based identification.',
+    description: 'Create, revoke, scope API keys with prefix-based identification. Perfect for AI/LLM integrations.',
     details: [
-      'Prefix-based identification — keys are identified by prefix for UX',
+      'Prefix-based identification — keys identified by prefix for UX',
       'Full key hashed with SHA-256 before storage',
       'Scopes system — restrict keys to specific operations',
       'Expiration support — keys auto-expire after set date',
@@ -76,7 +78,7 @@ const features = [
   {
     icon: '🔗',
     title: 'OAuth (Google + GitHub)',
-    summary: 'Sign in with Google or GitHub. First-login auto-creates account.',
+    description: 'Sign in with Google or GitHub. Auto-creates account and organization on first login.',
     details: [
       'Authorization code flow with PKCE support built in',
       'Google OAuth 2.0 — configured with Client ID and Secret',
@@ -90,7 +92,7 @@ const features = [
   {
     icon: '🧪',
     title: '60+ Integration Tests',
-    summary: 'Testcontainers with real PostgreSQL for every feature.',
+    description: 'Testcontainers with real PostgreSQL. Auth, multi-tenant isolation, invitations, billing, API keys.',
     details: [
       '14 test classes covering auth, multi-tenant, invitations, billing, API keys',
       'Testcontainers spins up real PostgreSQL 16 for each test run',
@@ -104,10 +106,10 @@ const features = [
   {
     icon: '🐳',
     title: 'Docker + CI/CD',
-    summary: 'Multi-stage Dockerfile, docker-compose, GitHub Actions pipeline.',
+    description: 'Multi-stage Dockerfile, docker-compose with PostgreSQL, GitHub Actions pipeline.',
     details: [
       'Multi-stage Docker build — SDK layer, build layer, runtime layer',
-      'Final image uses distroless-like slim runtime (only 180MB)',
+      'Final image uses slim runtime (only ~180MB)',
       'docker-compose with PostgreSQL 16 for local development',
       'GitHub Actions CI — build, test, and Docker image on every push',
       'Integration tests run against service container PostgreSQL',
@@ -118,7 +120,7 @@ const features = [
   {
     icon: '⚛️',
     title: 'React 19 + Tailwind v4',
-    summary: 'TypeScript strict, shadcn/ui components, dark mode, responsive.',
+    description: 'TypeScript strict, shadcn/ui components, dark mode, responsive dashboard. Vite-powered dev server.',
     details: [
       'React 19 with TypeScript strict mode — full type safety',
       'Tailwind CSS v4 with custom brand color palette via @theme directive',
@@ -131,45 +133,9 @@ const features = [
   },
 ]
 
-function FeatureSection({ f, reversed }: { f: typeof features[number]; reversed: boolean }) {
-  return (
-    <div className={`flex flex-col ${reversed ? 'lg:flex-row-reverse' : 'lg:flex-row'} gap-8 lg:gap-16 items-center`}>
-      <div className="flex-1 min-w-0">
-        <div className="text-4xl mb-4">{f.icon}</div>
-        <h3 className="text-2xl font-bold mb-2">{f.title}</h3>
-        <p className="text-neutral-600 dark:text-neutral-400 mb-6 text-lg">{f.summary}</p>
-        <ul className="space-y-2.5">
-          {f.details.map((d) => (
-            <li key={d} className="flex items-start gap-3 text-sm text-neutral-700 dark:text-neutral-300">
-              <svg className="size-5 text-brand-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
-              {d}
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div className="flex-1 w-full max-w-md lg:max-w-none">
-        <div className="rounded-2xl border border-neutral-200/60 dark:border-neutral-800/60 bg-white dark:bg-neutral-900/50 p-6 lg:p-8">
-          <div className="text-xs font-mono text-neutral-400 mb-4">// package includes</div>
-          <div className="space-y-3">
-            {f.details.slice(0, 3).map((d) => (
-              <div key={d} className="flex items-center gap-3 text-sm">
-                <span className="size-2 rounded-full bg-brand-500/60 shrink-0" />
-                <span className="text-neutral-600 dark:text-neutral-400">{d}</span>
-              </div>
-            ))}
-            <div className="pt-2 text-xs text-brand-600 dark:text-brand-400 font-medium">
-              +{f.details.length - 3} more capabilities
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
 export function LandingPage() {
+  const [expanded, setExpanded] = useState<number | null>(null)
+
   return (
     <div className="min-h-screen">
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-neutral-200/60 dark:border-neutral-800/60 bg-white/80 dark:bg-neutral-950/80 backdrop-blur-xl">
@@ -205,7 +171,7 @@ export function LandingPage() {
             </span>
           </h1>
           <p className="animate-fade-in-up animate-fade-in-up-delay-2 text-lg text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-            Production-ready starter kit with auth, multi-tenancy, Stripe billing,
+            Pre-configured AI agents included. Production-ready starter kit with auth, multi-tenancy, Stripe billing,
             team invitations, API keys, OAuth, and 60+ integration tests.
             Everything you need to launch your next SaaS.
           </p>
@@ -216,22 +182,103 @@ export function LandingPage() {
         </div>
       </section>
 
-      <section id="features" className="relative py-24">
+      <section id="features" className="relative py-24 border-t border-neutral-200/60 dark:border-neutral-800/60">
         <div className="absolute inset-0 -z-10">
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-brand-500/30 to-transparent" />
         </div>
         <div className="max-w-6xl mx-auto px-4">
-          <div className="text-center mb-20">
+          <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Everything you need to ship</h2>
             <p className="text-neutral-600 dark:text-neutral-400 max-w-xl mx-auto">
-              9 battle-tested modules. Zero config. One codebase. Heres exactly what each one does.
+              9 battle-tested modules. Zero config. One codebase. <strong>Click any card</strong> for full details.
             </p>
           </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {features.map((f, i) => {
+              const isOpen = expanded === i
+              return (
+                <div
+                  key={f.title}
+                  className={cn(
+                    'group relative rounded-2xl border transition-all duration-300 bg-white dark:bg-neutral-900/50 cursor-pointer',
+                    isOpen
+                      ? 'border-brand-500/40 dark:border-brand-500/40 shadow-lg shadow-brand-500/10'
+                      : 'border-neutral-200/60 dark:border-neutral-800/60 hover:border-brand-500/30 dark:hover:border-brand-500/30 hover:shadow-lg hover:shadow-brand-500/5 hover:-translate-y-0.5'
+                  )}
+                  onClick={() => setExpanded(isOpen ? null : i)}
+                >
+                  <div className={cn(
+                    'absolute inset-0 rounded-2xl bg-gradient-to-br from-brand-500/[0.03] to-transparent transition-opacity duration-300',
+                    isOpen ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                  )} />
+                  <div className="relative p-6">
+                    <div className={cn('flex items-start justify-between mb-3')}>
+                      <div className="text-2xl">{f.icon}</div>
+                      <svg
+                        className={cn(
+                          'size-5 text-neutral-400 transition-transform duration-300',
+                          isOpen && 'rotate-180'
+                        )}
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                    <h3 className="font-semibold mb-2">{f.title}</h3>
+                    <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
+                      {f.description}
+                    </p>
+                    <div className={cn(
+                      'overflow-hidden transition-all duration-300',
+                      isOpen ? 'max-h-96 opacity-100 mt-4' : 'max-h-0 opacity-0'
+                    )}>
+                      <div className="pt-4 border-t border-neutral-200/60 dark:border-neutral-800/60">
+                        <ul className="space-y-2">
+                          {f.details.map((d) => (
+                            <li key={d} className="flex items-start gap-2.5 text-sm text-neutral-700 dark:text-neutral-300">
+                              <svg className="size-4 text-brand-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                              </svg>
+                              {d}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </section>
 
-          <div className="space-y-24">
-            {features.map((f, i) => (
-              <FeatureSection key={f.title} f={f} reversed={i % 2 === 1} />
-            ))}
+      <section className="relative py-24 border-t border-neutral-200/60 dark:border-neutral-800/60">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Pre-configured AI Agents</h2>
+          <p className="text-neutral-600 dark:text-neutral-400 mb-4 max-w-xl mx-auto">
+            Every purchase includes <strong>AGENTS.md</strong> — a comprehensive AI context file that teaches
+            any coding assistant your entire architecture, security patterns, and conventions.
+          </p>
+          <div className="flex flex-wrap gap-3 justify-center text-sm text-neutral-500 dark:text-neutral-400 mb-8">
+            <span className="px-3 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800">Architecture rules</span>
+            <span className="px-3 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800">Security patterns</span>
+            <span className="px-3 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800">Code conventions</span>
+            <span className="px-3 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800">Test patterns</span>
+            <span className="px-3 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800">Deploy commands</span>
+          </div>
+          <div className="inline-block text-left bg-neutral-100 dark:bg-neutral-900 rounded-xl p-4 font-mono text-xs text-neutral-600 dark:text-neutral-400 max-w-lg mx-auto">
+            <div className="text-brand-500 mb-2">$ cat AGENTS.md | head -5</div>
+            <div className="space-y-1">
+              <div># DotForge — AI Agent Context</div>
+              <div className="text-neutral-400">This file provides everything an AI coding</div>
+              <div className="text-neutral-400">assistant needs to work effectively with the</div>
+              <div className="text-neutral-400">DotForge SaaS Starter Kit.</div>
+              <div className="text-neutral-500 mt-2">— 200+ lines of contextual documentation —</div>
+            </div>
+          </div>
+          <div className="mt-8">
+            <Link to="/register"><Button size="lg" className="bg-brand-600 hover:bg-brand-700 text-white shadow-lg shadow-brand-500/25">Get started free →</Button></Link>
           </div>
         </div>
       </section>
@@ -248,7 +295,7 @@ export function LandingPage() {
               <div className="text-4xl font-bold mb-1">$69</div>
               <p className="text-sm text-neutral-500 mb-6">Single developer</p>
               <ul className="text-sm space-y-3 text-left mb-8">
-                {['Full source code', '1 year updates', 'Unlimited projects', 'Email support'].map((item) => (
+                {['Full source code', 'Pre-configured AI agents', '1 year updates', 'Unlimited projects', 'Email support'].map((item) => (
                   <li key={item} className="flex items-center gap-2">
                     <svg className="size-4 text-brand-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                     {item}
