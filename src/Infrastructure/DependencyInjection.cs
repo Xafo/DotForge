@@ -13,7 +13,9 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration config)
     {
         var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL")
+                               ?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
                                ?? config.GetConnectionString("DefaultConnection");
+        Console.WriteLine($"[DotForge] Using PostgreSQL connection from: {(Environment.GetEnvironmentVariable("DATABASE_URL") != null ? "DATABASE_URL" : Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection") != null ? "ConnectionStrings__DefaultConnection env" : "appsettings.json")}");
         services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(connectionString));
 
