@@ -5,7 +5,7 @@ interface Organization {
   id: string
   name: string
   slug: string
-  role: string
+  role: string | number
 }
 
 export interface AuthState {

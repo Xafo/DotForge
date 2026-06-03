@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
 import { DashboardLayout } from './components/DashboardLayout'
+import { ErrorBoundary } from './components/ErrorBoundary'
 import { LoginPage } from './pages/LoginPage'
 import { RegisterPage } from './pages/RegisterPage'
 import { OAuthCallbackPage } from './pages/OAuthCallbackPage'
@@ -27,6 +28,7 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 function App() {
   return (
     <BrowserRouter>
+      <ErrorBoundary>
       <ThemeProvider>
       <AuthProvider>
         <Routes>
@@ -43,6 +45,7 @@ function App() {
         </Routes>
       </AuthProvider>
       </ThemeProvider>
+      </ErrorBoundary>
     </BrowserRouter>
   )
 }

@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using DotForge.Infrastructure;
 using DotForge.Infrastructure.Data;
 using DotForge.Infrastructure.Services;
@@ -42,7 +43,8 @@ builder.Services.AddCors(options =>
               .AllowCredentials());
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
 var app = builder.Build();
 

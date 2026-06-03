@@ -22,7 +22,7 @@ export function DashboardPage() {
             <CardTitle className="text-sm text-neutral-600 dark:text-neutral-400">Your Role</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold capitalize">{user?.organizations.find(o => o.id === user?.currentOrganizationId)?.role.toLowerCase()}</p>
+            <p className="text-2xl font-bold capitalize">{String(user?.organizations.find(o => o.id === user?.currentOrganizationId)?.role ?? '').toLowerCase()}</p>
           </CardContent>
         </Card>
         <Card>
