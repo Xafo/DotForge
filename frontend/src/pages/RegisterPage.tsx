@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
-import { ThemeToggle } from '../components/ThemeToggle'
+import { ThemePicker } from '../components/ThemePicker'
 
 export function RegisterPage() {
   const [name, setName] = useState('')
@@ -35,8 +35,8 @@ export function RegisterPage() {
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-brand-500/10 dark:bg-brand-500/5 rounded-full blur-3xl" />
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-brand-700/10 dark:bg-brand-700/5 rounded-full blur-3xl" />
       </div>
-      <div className="absolute top-4 right-4">
-        <ThemeToggle />
+      <div className="absolute top-4 right-4 z-10">
+        <ThemePicker />
       </div>
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">

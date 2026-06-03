@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '../components/ui/button'
-import { ThemeToggle } from '../components/ThemeToggle'
+import { ThemePicker } from '../components/ThemePicker'
 import { cn } from '../lib/utils'
 
 const features = [
@@ -143,8 +143,8 @@ export function LandingPage() {
           <Link to="/" className="text-xl font-bold bg-gradient-to-r from-brand-500 to-brand-700 bg-clip-text text-transparent">
             DotForge
           </Link>
-          <div className="flex items-center gap-3">
-            <ThemeToggle />
+          <div className="flex items-center gap-1 sm:gap-2">
+            <ThemePicker />
             <Link to="/login"><Button variant="ghost">Sign in</Button></Link>
             <Link to="/register"><Button>Get started</Button></Link>
           </div>
@@ -157,10 +157,14 @@ export function LandingPage() {
           <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-brand-700/10 dark:bg-brand-700/5 rounded-full blur-3xl" />
         </div>
         <div className="max-w-6xl mx-auto px-4 py-24 text-center">
-          <div className="animate-fade-in-up">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-brand-500/10 text-brand-600 dark:text-brand-400 mb-8 border border-brand-500/20">
+          <div className="animate-fade-in-up flex flex-wrap items-center justify-center gap-3 mb-8">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/20">
               <span className="size-2 rounded-full bg-brand-500 animate-pulse" />
-              .NET 10 + React 19 — Production Ready
+              .NET 10 + React 19
+            </div>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+              <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+              AI-ready agents included
             </div>
           </div>
           <h1 className="animate-fade-in-up animate-fade-in-up-delay-1 text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-tight">
@@ -253,32 +257,72 @@ export function LandingPage() {
         </div>
       </section>
 
-      <section className="relative py-24 border-t border-neutral-200/60 dark:border-neutral-800/60">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Pre-configured AI Agents</h2>
-          <p className="text-neutral-600 dark:text-neutral-400 mb-4 max-w-xl mx-auto">
-            Every purchase includes <strong>AGENTS.md</strong> — a comprehensive AI context file that teaches
-            any coding assistant your entire architecture, security patterns, and conventions.
-          </p>
-          <div className="flex flex-wrap gap-3 justify-center text-sm text-neutral-500 dark:text-neutral-400 mb-8">
-            <span className="px-3 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800">Architecture rules</span>
-            <span className="px-3 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800">Security patterns</span>
-            <span className="px-3 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800">Code conventions</span>
-            <span className="px-3 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800">Test patterns</span>
-            <span className="px-3 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800">Deploy commands</span>
-          </div>
-          <div className="inline-block text-left bg-neutral-100 dark:bg-neutral-900 rounded-xl p-4 font-mono text-xs text-neutral-600 dark:text-neutral-400 max-w-lg mx-auto">
-            <div className="text-brand-500 mb-2">$ cat AGENTS.md | head -5</div>
-            <div className="space-y-1">
-              <div># DotForge — AI Agent Context</div>
-              <div className="text-neutral-400">This file provides everything an AI coding</div>
-              <div className="text-neutral-400">assistant needs to work effectively with the</div>
-              <div className="text-neutral-400">DotForge SaaS Starter Kit.</div>
-              <div className="text-neutral-500 mt-2">— 200+ lines of contextual documentation —</div>
+      <section className="relative py-24 overflow-hidden border-t border-neutral-200/60 dark:border-neutral-800/60">
+        <div className="absolute inset-0 -z-10">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-brand-500/5 dark:bg-brand-500/[0.03] rounded-full blur-3xl" />
+        </div>
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/20 mb-6">
+                New — included in every purchase
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">AI Agents,<br />pre-configured for your codebase</h2>
+              <p className="text-neutral-600 dark:text-neutral-400 mb-8 leading-relaxed">
+                Every purchase ships with <strong className="text-foreground">AGENTS.md</strong> — a 200+ line
+                context file that teaches any AI coding assistant exactly how your project works.
+                No more explaining your architecture to AI. It already knows.
+              </p>
+              <div className="grid grid-cols-2 gap-3 mb-8">
+                {[
+                  ['Architecture', 'Clean Architecture layer rules'],
+                  ['Security', 'JWT, BCrypt, refresh rotation'],
+                  ['Conventions', 'Primary constructors, records'],
+                  ['Testing', 'xUnit + Testcontainers patterns'],
+                  ['Database', 'EF Core, migrations, connection strings'],
+                  ['Deploy', 'Docker, Railway, env vars'],
+                ].map(([a, b]) => (
+                  <div key={a} className="flex items-start gap-2.5">
+                    <svg className="size-4 text-brand-500 shrink-0 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                    <div>
+                      <div className="text-sm font-medium">{a}</div>
+                      <div className="text-xs text-neutral-500">{b}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <Link to="/register">
+                <Button size="lg" className="bg-brand-600 hover:bg-brand-700 text-white shadow-lg shadow-brand-500/25">
+                  Start building with AI →
+                </Button>
+              </Link>
             </div>
-          </div>
-          <div className="mt-8">
-            <Link to="/register"><Button size="lg" className="bg-brand-600 hover:bg-brand-700 text-white shadow-lg shadow-brand-500/25">Get started free →</Button></Link>
+            <div className="relative">
+              <div className="rounded-2xl border border-neutral-200/60 dark:border-neutral-800/60 bg-white dark:bg-neutral-900/50 shadow-xl overflow-hidden">
+                <div className="flex items-center gap-2 px-4 py-3 border-b border-neutral-200/60 dark:border-neutral-800/60 bg-neutral-50 dark:bg-neutral-900">
+                  <span className="size-3 rounded-full bg-red-500/80" />
+                  <span className="size-3 rounded-full bg-amber-500/80" />
+                  <span className="size-3 rounded-full bg-green-500/80" />
+                  <span className="text-xs text-neutral-500 font-mono ml-2">AGENTS.md</span>
+                </div>
+                <div className="p-4 font-mono text-xs leading-relaxed text-neutral-600 dark:text-neutral-400 overflow-x-auto">
+                  <div><span className="text-neutral-400"># </span><span className="text-brand-500">DotForge — AI Agent Context</span></div>
+                  <div className="mt-2"><span className="text-neutral-400"># Tech Stack</span></div>
+                  <div><span className="text-neutral-500">- Backend: </span>.NET 10 + EF Core + Npgsql</div>
+                  <div><span className="text-neutral-500">- Frontend: </span>React 19 + Tailwind v4</div>
+                  <div><span className="text-neutral-500">- Auth: </span>JWT (HMAC-SHA256) + BCrypt</div>
+                  <div><span className="text-neutral-500">- Tests: </span>xUnit + Testcontainers</div>
+                  <div className="mt-2"><span className="text-neutral-400"># Key Rule</span></div>
+                  <div>Primary constructors for DI classes.</div>
+                  <div>Records for DTOs. File-scoped namespaces.</div>
+                  <div className="mt-2"><span className="text-neutral-400"># Security</span></div>
+                  <div>Refresh token rotation + replay detection.</div>
+                  <div>BCrypt for passwords. SHA-256 for tokens.</div>
+                  <div className="mt-3 text-brand-500 font-semibold">→ 200+ lines · 10 sections · Zero config</div>
+                </div>
+              </div>
+              <div className="absolute -bottom-4 -right-4 -z-10 w-48 h-48 bg-brand-500/10 rounded-full blur-2xl" />
+            </div>
           </div>
         </div>
       </section>
@@ -342,7 +386,7 @@ export function LandingPage() {
         <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
           <span className="font-semibold bg-gradient-to-r from-brand-500 to-brand-700 bg-clip-text text-transparent">DotForge</span>
           <span>Built with .NET 10 and React 19</span>
-          <ThemeToggle />
+          <ThemePicker />
         </div>
       </footer>
     </div>
