@@ -10,14 +10,34 @@ namespace DotForge.Infrastructure;
 
 public static class DependencyInjection
 {
+    static string ResolveConnectionString(IConfiguration config)
+    {
+        var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+        if (databaseUrl is not null)
+        {
+            Console.WriteLine("[DotForge] PostgreSQL: DATABASE_URL");
+            return databaseUrl;
+        }
+
+        var pgHost = Environment.GetEnvironmentVariable("PGHOST");
+        if (pgHost is not null)
+        {
+            var pgPort = Environment.GetEnvironmentVariable("PGPORT") ?? "5432";
+            var pgUser = Environment.GetEnvironmentVariable("PGUSER") ?? "postgres";
+            var pgPass = Environment.GetEnvironmentVariable("PGPASSWORD") ?? "";
+            var pgDb = Environment.GetEnvironmentVariable("PGDATABASE") ?? "railway";
+            Console.WriteLine("[DotForge] PostgreSQL: PG* env vars");
+            return $"Host={pgHost};Port={pgPort};Database={pgDb};Username={pgUser};Password={pgPass};Include Error Detail=true";
+        }
+
+        Console.WriteLine("[DotForge] PostgreSQL: appsettings.json");
+        return config.GetConnectionString("DefaultConnection")!;
+    }
+
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration config)
     {
-        var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL")
-                               ?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
-                               ?? config.GetConnectionString("DefaultConnection");
-        Console.WriteLine($"[DotForge] Using PostgreSQL connection from: {(Environment.GetEnvironmentVariable("DATABASE_URL") != null ? "DATABASE_URL" : Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection") != null ? "ConnectionStrings__DefaultConnection env" : "appsettings.json")}");
         services.AddDbContext<AppDbContext>(options =>
-            options.UseNpgsql(connectionString));
+            options.UseNpgsql(ResolveConnectionString(config)));
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<ITenantProvider, TenantProvider>();
