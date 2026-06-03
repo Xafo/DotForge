@@ -12,10 +12,10 @@ public static class DependencyInjection
 {
     static string ResolveConnectionString(IConfiguration config)
     {
-        var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
-        if (databaseUrl is not null)
+        var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL")?.Trim();
+        if (!string.IsNullOrEmpty(databaseUrl))
         {
-            Console.WriteLine("[DotForge] PostgreSQL: DATABASE_URL");
+            Console.WriteLine($"[DotForge] PostgreSQL: DATABASE_URL (len={databaseUrl.Length}, start={databaseUrl[..Math.Min(20, databaseUrl.Length)]})");
             return databaseUrl;
         }
 
