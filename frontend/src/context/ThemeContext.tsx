@@ -40,7 +40,7 @@ function getInitialPalette(): Palette {
     const stored = localStorage.getItem('palette') as Palette | null
     if (stored && palettes.some((p) => p.id === stored)) return stored
   }
-  return 'indigo'
+  return 'rose'
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {

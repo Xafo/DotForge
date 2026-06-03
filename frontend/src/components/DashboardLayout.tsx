@@ -1,19 +1,28 @@
 import { type ReactNode } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useI18n } from '../context/I18nContext'
 import { ThemePicker } from './ThemePicker'
+import { LanguageToggle } from './LanguageToggle'
 import { cn } from '../lib/utils'
 
-const navItems = [
-  { path: '/app', label: 'Dashboard', icon: '▦' },
-  { path: '/app/members', label: 'Members', icon: '👥' },
-  { path: '/app/billing', label: 'Billing', icon: '💳' },
-  { path: '/app/api-keys', label: 'API Keys', icon: '🔑' },
-  { path: '/app/settings', label: 'Settings', icon: '⚙️' },
+interface NavItem {
+  path: string
+  labelKey: string
+  icon: string
+}
+
+const navItemDefs: NavItem[] = [
+  { path: '/app', labelKey: 'sidebar.dashboard', icon: '▦' },
+  { path: '/app/members', labelKey: 'sidebar.members', icon: '👥' },
+  { path: '/app/billing', labelKey: 'sidebar.billing', icon: '💳' },
+  { path: '/app/api-keys', labelKey: 'sidebar.api_keys', icon: '🔑' },
+  { path: '/app/settings', labelKey: 'sidebar.settings', icon: '⚙️' },
 ]
 
 export function DashboardLayout({ children }: { children: ReactNode }) {
   const { user, logout, switchOrganization } = useAuth()
+  const { t } = useI18n()
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -25,13 +34,16 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex h-screen">
       <aside className="w-64 border-r border-neutral-200 dark:border-neutral-800 flex flex-col">
-        <div className="p-4 border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between">
-          <h1 className="text-lg font-bold bg-gradient-to-r from-brand-500 to-brand-700 bg-clip-text text-transparent">DotForge</h1>
-          <ThemePicker />
+        <div className="p-4 border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between gap-2">
+          <h1 className="text-lg font-bold bg-gradient-to-r from-brand-500 to-brand-700 bg-clip-text text-transparent shrink-0">DotForge</h1>
+          <div className="flex items-center gap-1">
+            <LanguageToggle />
+            <ThemePicker />
+          </div>
         </div>
 
         <nav className="flex-1 p-2 space-y-1">
-          {navItems.map((item) => (
+          {navItemDefs.map((item) => (
             <Link
               key={item.path}
               to={item.path}
@@ -43,7 +55,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
               )}
             >
               <span>{item.icon}</span>
-              {item.label}
+              {t(item.labelKey)}
             </Link>
           ))}
         </nav>
@@ -62,7 +74,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
           )}
           <div className="flex items-center justify-between">
             <span className="text-sm text-neutral-600 dark:text-neutral-400 truncate">{user?.name}</span>
-            <button onClick={handleLogout} className="text-xs text-red-600 hover:text-red-500 cursor-pointer">Logout</button>
+            <button onClick={handleLogout} className="text-xs text-red-600 hover:text-red-500 cursor-pointer">{t('sidebar.logout')}</button>
           </div>
         </div>
       </aside>

@@ -1,9 +1,11 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useI18n } from '../context/I18nContext'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
+import { LanguageToggle } from '../components/LanguageToggle'
 import { ThemePicker } from '../components/ThemePicker'
 
 export function RegisterPage() {
@@ -13,6 +15,7 @@ export function RegisterPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const { register } = useAuth()
+  const { t } = useI18n()
   const navigate = useNavigate()
 
   const handleSubmit = async (e: FormEvent) => {
@@ -23,7 +26,7 @@ export function RegisterPage() {
       await register(email, password, name)
       navigate('/app')
     } catch (err: any) {
-      setError(err.message || 'Registration failed')
+      setError(err.message || t('register.error_fallback'))
     } finally {
       setLoading(false)
     }
@@ -35,7 +38,8 @@ export function RegisterPage() {
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-brand-500/10 dark:bg-brand-500/5 rounded-full blur-3xl" />
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-brand-700/10 dark:bg-brand-700/5 rounded-full blur-3xl" />
       </div>
-      <div className="absolute top-4 right-4 z-10">
+      <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
+        <LanguageToggle />
         <ThemePicker />
       </div>
       <Card className="w-full max-w-sm">
@@ -43,27 +47,27 @@ export function RegisterPage() {
           <Link to="/" className="text-xl font-bold bg-gradient-to-r from-brand-500 to-brand-700 bg-clip-text text-transparent mb-2 inline-block">
             DotForge
           </Link>
-          <CardTitle>Create your account</CardTitle>
+          <CardTitle>{t('register.title')}</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && <div className="text-sm text-red-600 bg-red-50 dark:bg-red-950 rounded-lg p-3">{error}</div>}
             <div className="space-y-2">
-              <label className="text-sm font-medium">Name</label>
-              <Input value={name} onChange={(e) => setName(e.target.value)} required placeholder="Your name" />
+              <label className="text-sm font-medium">{t('register.name_label')}</label>
+              <Input value={name} onChange={(e) => setName(e.target.value)} required placeholder={t('register.name_placeholder')} />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium">Email</label>
-              <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="you@example.com" />
+              <label className="text-sm font-medium">{t('register.email_label')}</label>
+              <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder={t('register.email_placeholder')} />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium">Password</label>
-              <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} placeholder="At least 8 characters" />
+              <label className="text-sm font-medium">{t('register.password_label')}</label>
+              <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} placeholder={t('register.password_placeholder')} />
             </div>
-            <Button type="submit" className="w-full" disabled={loading}>{loading ? 'Creating account...' : 'Create account'}</Button>
+            <Button type="submit" className="w-full" disabled={loading}>{loading ? t('register.submitting') : t('register.submit')}</Button>
           </form>
           <p className="text-sm text-center mt-4 text-neutral-600 dark:text-neutral-400">
-            Already have an account? <Link to="/login" className="text-brand-600 dark:text-brand-400 hover:underline">Sign in</Link>
+            {t('register.has_account')} <Link to="/login" className="text-brand-600 dark:text-brand-400 hover:underline">{t('register.login_link')}</Link>
           </p>
         </CardContent>
       </Card>

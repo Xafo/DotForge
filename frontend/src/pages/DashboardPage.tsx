@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useI18n } from '../context/I18nContext'
 import { api } from '../config/api'
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 
@@ -18,6 +19,7 @@ export function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const { t } = useI18n()
 
   useEffect(() => {
     api<DashboardData>('/dashboard')
@@ -29,7 +31,7 @@ export function DashboardPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <h2 className="text-2xl font-bold">Dashboard</h2>
+        <h2 className="text-2xl font-bold">{t('dashboard.title')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map((i) => (
             <Card key={i}>
@@ -45,10 +47,10 @@ export function DashboardPage() {
   if (error) {
     return (
       <div className="space-y-6">
-        <h2 className="text-2xl font-bold">Dashboard</h2>
+        <h2 className="text-2xl font-bold">{t('dashboard.title')}</h2>
         <Card>
           <CardContent className="py-8 text-center text-neutral-600 dark:text-neutral-400">
-            Could not load dashboard data. {error}
+            {t('dashboard.error_prefix')} {error}
           </CardContent>
         </Card>
       </div>
@@ -59,11 +61,11 @@ export function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold">Dashboard</h2>
+      <h2 className="text-2xl font-bold">{t('dashboard.title')}</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
-          <CardHeader><CardTitle className="text-sm text-neutral-600 dark:text-neutral-400">Organization</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-sm text-neutral-600 dark:text-neutral-400">{t('dashboard.org')}</CardTitle></CardHeader>
           <CardContent>
             <p className="text-xl font-bold truncate">{data?.organizationName}</p>
             <p className="text-xs text-neutral-500 mt-0.5">{data?.organizationSlug}</p>
@@ -72,43 +74,47 @@ export function DashboardPage() {
 
         <Link to="/app/members" className="block">
           <Card className="transition-colors hover:border-brand-500/40 cursor-pointer">
-            <CardHeader><CardTitle className="text-sm text-neutral-600 dark:text-neutral-400">Members</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm text-neutral-600 dark:text-neutral-400">{t('dashboard.members')}</CardTitle></CardHeader>
             <CardContent>
               <p className="text-xl font-bold">{data?.memberCount}</p>
               {data && data.pendingInvitations > 0 && (
-                <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">{data.pendingInvitations} pending invitation{data.pendingInvitations > 1 ? 's' : ''}</p>
+                <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">
+                  {data.pendingInvitations === 1
+                    ? t('dashboard.pending', { n: data.pendingInvitations })
+                    : t('dashboard.pending_plural', { n: data.pendingInvitations })}
+                </p>
               )}
-              <p className="text-xs text-neutral-500 mt-0.5">Your role: {String(data?.role ?? '').toLowerCase()}</p>
+              <p className="text-xs text-neutral-500 mt-0.5">{t('dashboard.your_role', { role: String(data?.role ?? '').toLowerCase() })}</p>
             </CardContent>
           </Card>
         </Link>
 
         <Link to="/app/api-keys" className="block">
           <Card className="transition-colors hover:border-brand-500/40 cursor-pointer">
-            <CardHeader><CardTitle className="text-sm text-neutral-600 dark:text-neutral-400">API Keys</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm text-neutral-600 dark:text-neutral-400">{t('dashboard.api_keys')}</CardTitle></CardHeader>
             <CardContent>
               <p className="text-xl font-bold">{data?.apiKeyCount}</p>
               {data && data.activeApiKeys > 0 && (
-                <p className="text-xs text-green-600 dark:text-green-400 mt-0.5">{data.activeApiKeys} active</p>
+                <p className="text-xs text-green-600 dark:text-green-400 mt-0.5">{t('dashboard.active_keys', { n: data.activeApiKeys })}</p>
               )}
-              <p className="text-xs text-neutral-500 mt-0.5">Total keys</p>
+              <p className="text-xs text-neutral-500 mt-0.5">{t('dashboard.total_keys')}</p>
             </CardContent>
           </Card>
         </Link>
 
         <Link to="/app/billing" className="block">
           <Card className="transition-colors hover:border-brand-500/40 cursor-pointer">
-            <CardHeader><CardTitle className="text-sm text-neutral-600 dark:text-neutral-400">Billing</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm text-neutral-600 dark:text-neutral-400">{t('dashboard.billing')}</CardTitle></CardHeader>
             <CardContent>
               {data?.subscription?.isActive ? (
                 <>
-                  <p className="text-xl font-bold text-green-600 dark:text-green-400">Active</p>
+                  <p className="text-xl font-bold text-green-600 dark:text-green-400">{t('dashboard.active')}</p>
                   <p className="text-xs text-neutral-500 mt-0.5 capitalize">{data.subscription.status}</p>
                 </>
               ) : (
                 <>
-                  <p className="text-xl font-bold text-neutral-400">Free</p>
-                  <p className="text-xs text-neutral-500 mt-0.5">No active plan</p>
+                  <p className="text-xl font-bold text-neutral-400">{t('dashboard.free')}</p>
+                  <p className="text-xs text-neutral-500 mt-0.5">{t('dashboard.no_plan')}</p>
                 </>
               )}
             </CardContent>
@@ -119,14 +125,14 @@ export function DashboardPage() {
       {isNewOrg && (
         <Card>
           <CardHeader>
-            <CardTitle>Getting Started</CardTitle>
+            <CardTitle>{t('dashboard.getting_started')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-sm text-neutral-600 dark:text-neutral-400">
-            <p>✅ Your account is set up and you're logged in.</p>
-            <p>➡️ <Link to="/app/members" className="text-brand-600 dark:text-brand-400 hover:underline">Invite team members</Link> to collaborate on your organization.</p>
-            <p>➡️ <Link to="/app/billing" className="text-brand-600 dark:text-brand-400 hover:underline">Set up billing</Link> to accept payments and manage subscriptions.</p>
-            <p>➡️ <Link to="/app/api-keys" className="text-brand-600 dark:text-brand-400 hover:underline">Generate API keys</Link> for programmatic access to your account.</p>
-            <p>➡️ <Link to="/app/settings" className="text-brand-600 dark:text-brand-400 hover:underline">Update your profile</Link> and account settings.</p>
+            <p>{t('dashboard.gs_logged_in')}</p>
+            <p>{t('dashboard.gs_invite')}</p>
+            <p>{t('dashboard.gs_billing')}</p>
+            <p>{t('dashboard.gs_apikeys')}</p>
+            <p>{t('dashboard.gs_profile')}</p>
           </CardContent>
         </Card>
       )}

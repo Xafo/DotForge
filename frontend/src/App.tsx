@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
+import { I18nProvider } from './context/I18nContext'
 import { DashboardLayout } from './components/DashboardLayout'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { LoginPage } from './pages/LoginPage'
@@ -29,6 +30,7 @@ function App() {
   return (
     <BrowserRouter>
       <ErrorBoundary>
+      <I18nProvider>
       <ThemeProvider>
       <AuthProvider>
         <Routes>
@@ -45,6 +47,7 @@ function App() {
         </Routes>
       </AuthProvider>
       </ThemeProvider>
+      </I18nProvider>
       </ErrorBoundary>
     </BrowserRouter>
   )

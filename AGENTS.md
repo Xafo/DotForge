@@ -4,7 +4,7 @@ This file provides everything an AI coding assistant needs to work effectively w
 
 ## Project Overview
 
-DotForge is a production-ready .NET 10 + React 19 SaaS starter kit. It ships with auth, multi-tenancy, Stripe billing, team invitations, API keys, OAuth (Google + GitHub), and 60+ integration tests — all wired up and ready to deploy.
+DotForge is a production-ready .NET 10 + React 19 SaaS starter kit. It ships with auth, multi-tenancy, Stripe billing, team invitations, API keys, OAuth (Google + GitHub), 60+ integration tests, and a bilingual (English/Spanish) UI — all wired up and ready to deploy.
 
 ```
 GitHub: github.com/Xafo/DotForge
@@ -73,6 +73,9 @@ Web → Infrastructure → Application → Domain
 | `frontend/src/config/api.ts` | API client with 401 → refresh → retry logic |
 | `frontend/src/context/AuthContext.tsx` | Auth state management + localStorage persistence |
 | `src/Infrastructure/Data/AppDbContext.cs` | EF Core DbContext with all DbSets |
+| `frontend/src/i18n/index.ts` | Bilingual translations (250+ keys, English + Spanish) |
+| `frontend/src/context/I18nContext.tsx` | I18n context provider + `useI18n()` hook |
+| `frontend/src/components/LanguageToggle.tsx` | EN/ES toggle button |
 
 ## C# Coding Conventions
 
@@ -129,6 +132,16 @@ public class SomeController : ControllerBase
 ```
 
 ## TypeScript / React Conventions
+
+### i18n / Internationalization
+- All user-facing strings use `useI18n()` hook: `const { t } = useI18n()`
+- Translations live in `frontend/src/i18n/index.ts` (flat key-value, 250+ keys per locale)
+- Supported locales: `'en'` (English) and `'es'` (Spanish)
+- Parameter interpolation: `t('key', { name: 'value' })` replaces `{name}` in the string
+- Locale is persisted in `localStorage` under key `locale`
+- LanguageToggle component renders EN/ES flag button, available on all pages
+- I18nProvider wraps the entire app (inside ErrorBoundary)
+- ErrorBoundary uses `I18nContext` via `contextType` for class component access
 
 ### Component patterns
 - **Named function exports** (no `export default` except `App.tsx`)

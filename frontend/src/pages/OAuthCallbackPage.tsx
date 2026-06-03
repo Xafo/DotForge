@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { useI18n } from '../context/I18nContext'
 import { api } from '../config/api'
 
 export function OAuthCallbackPage() {
   const { provider } = useParams<{ provider: string }>()
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
+  const { t } = useI18n()
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -13,7 +15,7 @@ export function OAuthCallbackPage() {
 
     const code = searchParams.get('code')
     if (!code) {
-      setError('No authorization code received.')
+      setError(t('oauth.no_code'))
       return
     }
 
@@ -28,7 +30,7 @@ export function OAuthCallbackPage() {
         window.location.href = '/app'
       })
       .catch((err) => {
-        setError(err.message || 'OAuth login failed.')
+        setError(err.message || t('oauth.failed'))
       })
   }, [provider])
 
@@ -37,7 +39,7 @@ export function OAuthCallbackPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center space-y-4">
           <p className="text-red-600">{error}</p>
-          <button onClick={() => navigate('/login')} className="text-sm underline">Back to login</button>
+          <button onClick={() => navigate('/login')} className="text-sm underline">{t('oauth.back')}</button>
         </div>
       </div>
     )
@@ -45,7 +47,7 @@ export function OAuthCallbackPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
-      <p className="text-neutral-600">Completing sign in with {provider}...</p>
+      <p className="text-neutral-600">{t('oauth.completing', { provider: provider ?? '' })}</p>
     </div>
   )
 }

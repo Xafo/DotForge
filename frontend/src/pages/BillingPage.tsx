@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
+import { useI18n } from '../context/I18nContext'
 import { api } from '../config/api'
 import { Button } from '../components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
@@ -13,6 +14,7 @@ interface Subscription {
 
 export function BillingPage() {
   const { user } = useAuth()
+  const { t } = useI18n()
   const [subscription, setSubscription] = useState<Subscription | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -49,31 +51,31 @@ export function BillingPage() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold">Billing</h2>
+      <h2 className="text-2xl font-bold">{t('billing.title')}</h2>
 
       <Card>
         <CardHeader>
-          <CardTitle>Subscription</CardTitle>
+          <CardTitle>{t('billing.card_title')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {loading ? (
-            <p className="text-sm text-neutral-600">Loading...</p>
+            <p className="text-sm text-neutral-600">{t('billing.loading')}</p>
           ) : subscription ? (
             <div className="space-y-2">
-              <p className="text-sm">Status: <span className="font-medium capitalize">{subscription.status.toLowerCase()}</span></p>
+              <p className="text-sm">{t('billing.status', { status: subscription.status.toLowerCase() })}</p>
               {subscription.periodEnd && (
-                <p className="text-sm">Period ends: {new Date(subscription.periodEnd).toLocaleDateString()}</p>
+                <p className="text-sm">{t('billing.period_ends', { date: new Date(subscription.periodEnd).toLocaleDateString() })}</p>
               )}
               {subscription.isActive ? (
-                <Button onClick={handleManageBilling}>Manage billing</Button>
+                <Button onClick={handleManageBilling}>{t('billing.manage')}</Button>
               ) : (
-                <p className="text-sm text-neutral-600">Your subscription is not active.</p>
+                <p className="text-sm text-neutral-600">{t('billing.inactive')}</p>
               )}
             </div>
           ) : (
             <div className="space-y-3">
-              <p className="text-sm text-neutral-600">No subscription yet.</p>
-              <Button onClick={handleSubscribe}>Subscribe</Button>
+              <p className="text-sm text-neutral-600">{t('billing.no_subscription')}</p>
+              <Button onClick={handleSubscribe}>{t('billing.subscribe')}</Button>
             </div>
           )}
         </CardContent>
