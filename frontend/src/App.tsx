@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
+import { ThemeProvider } from './context/ThemeContext'
 import { DashboardLayout } from './components/DashboardLayout'
 import { LoginPage } from './pages/LoginPage'
 import { RegisterPage } from './pages/RegisterPage'
@@ -26,6 +27,7 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 function App() {
   return (
     <BrowserRouter>
+      <ThemeProvider>
       <AuthProvider>
         <Routes>
           <Route path="/" element={<PublicRoute><LandingPage /></PublicRoute>} />
@@ -40,6 +42,7 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   )
 }

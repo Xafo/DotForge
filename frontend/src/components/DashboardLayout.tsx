@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { ThemeToggle } from './ThemeToggle'
 import { cn } from '../lib/utils'
 
 const navItems = [
@@ -24,8 +25,9 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex h-screen">
       <aside className="w-64 border-r border-neutral-200 dark:border-neutral-800 flex flex-col">
-        <div className="p-4 border-b border-neutral-200 dark:border-neutral-800">
-          <h1 className="text-lg font-bold">DotForge</h1>
+        <div className="p-4 border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between">
+          <h1 className="text-lg font-bold bg-gradient-to-r from-brand-500 to-brand-700 bg-clip-text text-transparent">DotForge</h1>
+          <ThemeToggle />
         </div>
 
         <nav className="flex-1 p-2 space-y-1">
