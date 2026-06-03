@@ -55,6 +55,11 @@ public interface IUserService
     Task ChangePasswordAsync(Guid userId, ChangePasswordRequest request);
 }
 
+public interface IDashboardService
+{
+    Task<DashboardDto> GetDashboardAsync(Guid organizationId, Guid userId);
+}
+
 public interface ITokenService
 {
     string GenerateAccessToken(User user, Guid organizationId);

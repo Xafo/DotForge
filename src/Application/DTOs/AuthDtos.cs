@@ -63,3 +63,14 @@ public record SubscriptionDto(
 );
 
 public record UserProfileDto(Guid Id, string Email, string Name, string? AvatarUrl, DateTime CreatedAt);
+
+public record DashboardDto(
+    string OrganizationName,
+    string OrganizationSlug,
+    string Role,
+    int MemberCount,
+    int PendingInvitations,
+    int ApiKeyCount,
+    int ActiveApiKeys,
+    SubscriptionDto? Subscription
+);
